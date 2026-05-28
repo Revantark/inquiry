@@ -1,0 +1,7 @@
+error[E0609]: no field `name` on type `PlayerQuery<T>`
+  --> tests/ui/fail/query_filter_fields_not_public.rs:12:19
+   |
+12 |     let _ = query.name;
+   |                   ^^^^ unknown field
+   |
+   = note: available fields are: `conditions`, `pool`

@@ -1,0 +1,15 @@
+error[E0599]: no method named `set_id` found for struct `Player` in the current scope
+  --> tests/ui/fail/primary_key_setter.rs:16:6
+   |
+ 5 |   struct Player {
+   |   ------------- method `set_id` not found for this struct
+...
+12 |       let _ = Player {
+   |  _____________-
+13 | |         id: String::from("player-1"),
+14 | |         name: String::from("Alice"),
+15 | |     }
+16 | |     .set_id(String::from("player-2"));
+   | |     -^^^^^^ method not found in `Player`
+   | |_____|
+   |

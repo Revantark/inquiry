@@ -1,0 +1,16 @@
+error[E0308]: mismatched types
+  --> tests/ui/fail/bool_like_operator.rs:11:52
+   |
+11 |     let _ = FeatureFlag::query(pool).where_enabled(QueryOperator::Like, true);
+   |                                      ------------- ^^^^^^^^^^^^^^^^^^^ expected `QueryEqualityOperator`, found `QueryOperator`
+   |                                      |
+   |                                      arguments to this method are incorrect
+   |
+note: method defined here
+  --> tests/ui/fail/bool_like_operator.rs:7:5
+   |
+ 3 | #[derive(sqlx::FromRow, Queryable, Debug)]
+   |                         ---------
+...
+ 7 |     enabled: bool,
+   |     ^^^^^^^

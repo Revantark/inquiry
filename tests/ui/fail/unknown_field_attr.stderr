@@ -1,0 +1,5 @@
+error: unsupported query attribute; expected `column = "..."`, `sql_type = "..."`, or `primary_key`
+ --> tests/ui/fail/unknown_field_attr.rs:5:13
+  |
+5 |     #[query(colum = "player_id")]
+  |             ^^^^^

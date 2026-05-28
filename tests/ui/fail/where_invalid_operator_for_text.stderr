@@ -1,0 +1,16 @@
+error[E0308]: mismatched types
+  --> tests/ui/fail/where_invalid_operator_for_text.rs:11:44
+   |
+11 |     let _ = Player::query(pool).where_name(QueryOrderingOperator::Gte, String::from("Tom"));
+   |                                 ---------- ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `QueryOperator`, found `QueryOrderingOperator`
+   |                                 |
+   |                                 arguments to this method are incorrect
+   |
+note: method defined here
+  --> tests/ui/fail/where_invalid_operator_for_text.rs:7:5
+   |
+ 3 | #[derive(sqlx::FromRow, Queryable, Debug)]
+   |                         ---------
+...
+ 7 |     name: String,
+   |     ^^^^

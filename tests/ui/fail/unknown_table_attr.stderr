@@ -1,0 +1,5 @@
+error: unsupported query attribute; expected `table = "..."`
+ --> tests/ui/fail/unknown_table_attr.rs:4:9
+  |
+4 | #[query(tabel = "players")]
+  |         ^^^^^

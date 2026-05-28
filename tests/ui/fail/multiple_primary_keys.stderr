@@ -1,0 +1,5 @@
+error: only one #[query(primary_key)] field is currently supported
+ --> tests/ui/fail/multiple_primary_keys.rs:4:8
+  |
+4 | struct BadPrimaryKeys {
+  |        ^^^^^^^^^^^^^^

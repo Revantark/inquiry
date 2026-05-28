@@ -1,0 +1,5 @@
+error: table name must be a simple SQL identifier: ASCII letters, digits, and underscores, not starting with a digit
+ --> tests/ui/fail/invalid_table_identifier.rs:5:8
+  |
+5 | struct InvalidTableIdentifier {
+  |        ^^^^^^^^^^^^^^^^^^^^^^

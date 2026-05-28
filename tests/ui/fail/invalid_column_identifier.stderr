@@ -1,0 +1,5 @@
+error: column name must be a simple SQL identifier: ASCII letters, digits, and underscores, not starting with a digit
+ --> tests/ui/fail/invalid_column_identifier.rs:6:5
+  |
+6 |     id: String,
+  |     ^^

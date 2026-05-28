@@ -1,0 +1,16 @@
+error[E0308]: mismatched types
+  --> tests/ui/fail/where_wrong_type.rs:11:70
+   |
+11 |     let _ = Player::query(pool).where_age(QueryOrderingOperator::Eq, String::from("old"));
+   |                                 ---------                            ^^^^^^^^^^^^^^^^^^^ expected `i64`, found `String`
+   |                                 |
+   |                                 arguments to this method are incorrect
+   |
+note: method defined here
+  --> tests/ui/fail/where_wrong_type.rs:7:5
+   |
+ 3 | #[derive(sqlx::FromRow, Queryable, Debug)]
+   |                         ---------
+...
+ 7 |     age: i64,
+   |     ^^^
