@@ -5,7 +5,8 @@ builders without writing the same CRUD glue for every struct.
 
 You define a model, derive `Queryable`, and `inquiry` gives you a typed query
 builder for that model. It can create the table, insert rows, upsert by primary
-key, update by primary key, and fetch rows with field-specific filters.
+key, update by primary key, fetch rows, and delete rows with field-specific
+filters.
 
 The crate currently targets SQLx and PostgreSQL.
 
@@ -17,7 +18,7 @@ For a model like `Player`, `inquiry` generates:
 - a query builder named `PlayerQuery<T>`
 - `PlayerQueryError`
 - table creation helpers
-- insert, upsert, update, and fetch methods
+- insert, upsert, update, fetch, and delete methods
 - `by_<field>` equality filters
 - `where_<field>` operator filters
 
@@ -175,6 +176,19 @@ Both methods require at least one filter. If you call them without filters, they
 return `PlayerQueryError::NoFilters`. This is intentional: the generated API is
 biased away from accidental full-table reads.
 
+## Deleting Rows
+
+```rust
+query.by_id("one".to_string()).delete_one().await?;
+query.where_name(QueryOperator::ILike, "bot-%".to_string()).delete_many().await?;
+```
+
+`delete_one` deletes at most one matching row. `delete_many` deletes all matching
+rows.
+
+Both methods require at least one filter. If you call them without filters, they
+return `PlayerQueryError::NoFilters`, matching the fetch safety behavior.
+
 ## Operators
 
 `QueryOperator` is for strings:
@@ -326,7 +340,8 @@ For other types, add `#[query(sql_type = "...")]` to the field.
 - This crate currently targets SQLx and PostgreSQL.
 - The derive macro only supports named struct fields.
 - Only one primary key field is supported.
-- `fetch_one` and `fetch_many` require at least one configured filter.
+- `fetch_one`, `fetch_many`, `delete_one`, and `delete_many` require at least
+  one configured filter.
 - `LIKE` and `ILIKE` are available through `QueryOperator`; pass the SQL pattern
   yourself, such as `"Ali%"` or `"%ice"`.
 - PostgreSQL does not have native unsigned integer columns. Prefer signed Rust

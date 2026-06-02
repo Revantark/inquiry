@@ -29,6 +29,13 @@ async fn assert_update_one_api(pool: sqlx::PgPool) {
         .await;
 }
 
+async fn assert_delete_api(pool: sqlx::PgPool) {
+    let query = Player::query(pool);
+
+    let _ = query.clone().by_id(String::from("player-1")).delete_one().await;
+    let _ = query.by_name(String::from("Alice")).delete_many().await;
+}
+
 fn assert_model_setter_api() {
     let player = Player {
         id: String::from("player-1"),

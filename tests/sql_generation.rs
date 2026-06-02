@@ -37,6 +37,39 @@ async fn select_sql_uses_aliases_filters_and_placeholders() {
 }
 
 #[tokio::test]
+async fn delete_many_sql_uses_filters_and_placeholders() {
+    let query = Player::query(pg_pool())
+        .where_name(QueryOperator::ILike, String::from("ali%"))
+        .where_active(QueryEqualityOperator::Eq, true);
+
+    let (sql, _) = query.build_delete_sql(None).unwrap();
+
+    assert_eq!(
+        sql,
+        "DELETE FROM players WHERE name ILIKE $1 AND active = $2"
+    );
+}
+
+#[tokio::test]
+async fn delete_one_sql_limits_to_one_matching_row() {
+    let query = Player::query(pg_pool()).by_name(String::from("Alice"));
+
+    let (sql, _) = query.build_delete_sql(Some(1)).unwrap();
+
+    assert_eq!(
+        sql,
+        "DELETE FROM players WHERE ctid IN (SELECT ctid FROM players WHERE name = $1 LIMIT 1)"
+    );
+}
+
+#[tokio::test]
+async fn delete_sql_requires_filters() {
+    let error = Player::query(pg_pool()).build_delete_sql(None).unwrap_err();
+
+    assert!(matches!(error, PlayerQueryError::NoFilters));
+}
+
+#[tokio::test]
 async fn create_table_sql_marks_primary_key() {
     let query = Player::query(pg_pool());
 

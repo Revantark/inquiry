@@ -3,6 +3,42 @@ use quote::quote;
 
 use super::context::{field_bind_bounds, ExpansionContext};
 
+pub(super) fn expand_append_conditions_method(cx: &ExpansionContext) -> TokenStream {
+    let query_error = &cx.query_error;
+    let field_bind_bounds = field_bind_bounds(cx);
+
+    quote! {
+        fn append_conditions_sql<'args>(
+            &'args self,
+            sql: &mut ::std::string::String,
+            args: &mut <T as ::sqlx::Database>::Arguments<'args>,
+        ) -> Result<bool, #query_error>
+        where
+            <T as ::sqlx::Database>::Arguments<'args>: ::sqlx::Arguments<'args, Database = T>,
+            #( #field_bind_bounds )*
+        {
+            let mut has_filters = false;
+
+            for condition in &self.conditions {
+                if condition.is_empty() {
+                    continue;
+                }
+
+                if has_filters {
+                    sql.push_str(" AND ");
+                } else {
+                    sql.push_str(" WHERE ");
+                    has_filters = true;
+                }
+
+                condition.append_sql::<T>(sql, args)?;
+            }
+
+            Ok(has_filters)
+        }
+    }
+}
+
 pub(super) fn expand_fetch_methods(cx: &ExpansionContext) -> TokenStream {
     let struct_name = &cx.struct_name;
     let query_error = &cx.query_error;
@@ -54,7 +90,6 @@ pub(super) fn expand_build_select_sql_method(cx: &ExpansionContext) -> TokenStre
     let select_fields = &cx.select_fields;
     let query_error = &cx.query_error;
     let field_bind_bounds = field_bind_bounds(cx);
-    let appended_conditions = appended_conditions();
 
     quote! {
         fn build_select_sql<'args>(
@@ -76,9 +111,7 @@ pub(super) fn expand_build_select_sql_method(cx: &ExpansionContext) -> TokenStre
             sql.push_str(" FROM ");
             sql.push_str(#table_name);
             let mut args = <T as ::sqlx::Database>::Arguments::default();
-            let mut has_filters = false;
-
-            #appended_conditions
+            let has_filters = self.append_conditions_sql(&mut sql, &mut args)?;
 
             if !has_filters {
                 return Err(#query_error::NoFilters);
@@ -90,25 +123,6 @@ pub(super) fn expand_build_select_sql_method(cx: &ExpansionContext) -> TokenStre
             }
 
             Ok((sql, args))
-        }
-    }
-}
-
-fn appended_conditions() -> TokenStream {
-    quote! {
-        for condition in &self.conditions {
-            if condition.is_empty() {
-                continue;
-            }
-
-            if has_filters {
-                sql.push_str(" AND ");
-            } else {
-                sql.push_str(" WHERE ");
-                has_filters = true;
-            }
-
-            condition.append_sql::<T>(&mut sql, &mut args)?;
         }
     }
 }

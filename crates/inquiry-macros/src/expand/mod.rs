@@ -109,22 +109,26 @@ fn expand_clone_impl(cx: &ExpansionContext) -> TokenStream {
 fn expand_query_impl(cx: &ExpansionContext) -> TokenStream {
     let query_name = &cx.query_name;
     let constructor = expand_constructor();
+    let append_conditions = retrieval::expand_append_conditions_method(cx);
     let filters = filters::expand_filter_methods(cx);
     let create_table = schema::expand_create_table_method(cx);
     let inserts = persistence::expand_insert_methods(cx);
     let upsert = persistence::expand_upsert_method(cx);
     let update_many = persistence::expand_update_methods(cx);
+    let deletes = persistence::expand_delete_methods(cx);
     let build_select_sql = retrieval::expand_build_select_sql_method(cx);
     let fetch = retrieval::expand_fetch_methods(cx);
 
     quote! {
         impl<T: ::sqlx::Database> #query_name<T> {
             #constructor
+            #append_conditions
             #filters
             #create_table
             #inserts
             #upsert
             #update_many
+            #deletes
             #build_select_sql
             #fetch
         }

@@ -285,6 +285,94 @@ pub(super) fn expand_update_methods(cx: &ExpansionContext) -> TokenStream {
     }
 }
 
+pub(super) fn expand_delete_methods(cx: &ExpansionContext) -> TokenStream {
+    let table_name = &cx.table_name;
+    let query_error = &cx.query_error;
+    let field_bind_bounds = field_bind_bounds(cx);
+
+    quote! {
+        fn build_delete_sql<'args>(
+            &'args self,
+            limit: ::core::option::Option<u32>,
+        ) -> Result<
+            (
+                ::std::string::String,
+                <T as ::sqlx::Database>::Arguments<'args>,
+            ),
+            #query_error,
+        >
+        where
+            <T as ::sqlx::Database>::Arguments<'args>: ::core::default::Default + ::sqlx::Arguments<'args, Database = T>,
+            #( #field_bind_bounds )*
+        {
+            let mut sql = ::std::string::String::from("DELETE FROM ");
+            sql.push_str(#table_name);
+            let mut args = <T as ::sqlx::Database>::Arguments::default();
+
+            if let ::core::option::Option::Some(limit) = limit {
+                sql.push_str(" WHERE ctid IN (SELECT ctid FROM ");
+                sql.push_str(#table_name);
+
+                let has_filters = self.append_conditions_sql(&mut sql, &mut args)?;
+
+                if !has_filters {
+                    return Err(#query_error::NoFilters);
+                }
+
+                sql.push_str(" LIMIT ");
+                sql.push_str(&limit.to_string());
+                sql.push_str(")");
+            } else {
+                let has_filters = self.append_conditions_sql(&mut sql, &mut args)?;
+
+                if !has_filters {
+                    return Err(#query_error::NoFilters);
+                }
+            }
+
+            Ok((sql, args))
+        }
+
+        /// Deletes at most one row matching the configured filters and conditions.
+        pub async fn delete_one(&self) -> Result<(), #query_error>
+        where
+            for<'args> <T as ::sqlx::Database>::Arguments<'args>: ::core::default::Default + ::sqlx::Arguments<'args, Database = T>,
+            for<'args> <T as ::sqlx::Database>::Arguments<'args>: ::sqlx::IntoArguments<'args, T>,
+            for<'c> &'c mut T::Connection: ::sqlx::Executor<'c, Database = T>,
+            #( #field_bind_bounds )*
+        {
+            let (sql, args) = self.build_delete_sql(::core::option::Option::Some(1))?;
+            let mut conn = self.pool.acquire().await.map_err(#query_error::Database)?;
+
+            ::sqlx::query_with::<T, _>(&sql, args)
+                .execute(&mut *conn)
+                .await
+                .map_err(#query_error::Database)?;
+
+            Ok(())
+        }
+
+        /// Deletes all rows matching the configured filters and conditions.
+        pub async fn delete_many(&self) -> Result<(), #query_error>
+        where
+            for<'args> <T as ::sqlx::Database>::Arguments<'args>: ::core::default::Default + ::sqlx::Arguments<'args, Database = T>,
+            for<'args> <T as ::sqlx::Database>::Arguments<'args>: ::sqlx::IntoArguments<'args, T>,
+            for<'c> &'c mut T::Connection: ::sqlx::Executor<'c, Database = T>,
+            #( #field_bind_bounds )*
+        {
+            let (sql, args) = self.build_delete_sql(::core::option::Option::None)?;
+            let mut conn = self.pool.acquire().await.map_err(#query_error::Database)?;
+
+            ::sqlx::query_with::<T, _>(&sql, args)
+                .execute(&mut *conn)
+                .await
+                .map_err(#query_error::Database)?;
+
+            Ok(())
+        }
+    }
+}
+
 fn insert_value_binds(cx: &ExpansionContext) -> Vec<TokenStream> {
     let query_error = &cx.query_error;
 
