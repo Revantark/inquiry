@@ -36,6 +36,13 @@ async fn assert_delete_api(pool: sqlx::PgPool) {
     let _ = query.by_name(String::from("Alice")).delete_many().await;
 }
 
+async fn assert_count_exists_api(pool: sqlx::PgPool) {
+    let query = Player::query(pool);
+
+    let _: Result<i64, _> = query.clone().by_age(42).count().await;
+    let _: Result<bool, _> = query.by_name(String::from("Alice")).exists().await;
+}
+
 fn assert_model_setter_api() {
     let player = Player {
         id: String::from("player-1"),

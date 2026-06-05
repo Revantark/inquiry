@@ -118,6 +118,7 @@ fn expand_query_impl(cx: &ExpansionContext) -> TokenStream {
     let deletes = persistence::expand_delete_methods(cx);
     let build_select_sql = retrieval::expand_build_select_sql_method(cx);
     let fetch = retrieval::expand_fetch_methods(cx);
+    let count_exists = retrieval::expand_count_exists_methods(cx);
 
     quote! {
         impl<T: ::sqlx::Database> #query_name<T> {
@@ -131,6 +132,7 @@ fn expand_query_impl(cx: &ExpansionContext) -> TokenStream {
             #deletes
             #build_select_sql
             #fetch
+            #count_exists
         }
     }
 }

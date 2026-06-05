@@ -37,6 +37,46 @@ async fn select_sql_uses_aliases_filters_and_placeholders() {
 }
 
 #[tokio::test]
+async fn count_sql_uses_filters_and_placeholders() {
+    let query = Player::query(pg_pool())
+        .where_name(QueryOperator::ILike, String::from("ali%"))
+        .where_active(QueryEqualityOperator::Eq, true);
+
+    let (sql, _) = query.build_count_sql().unwrap();
+
+    assert_eq!(
+        sql,
+        "SELECT COUNT(*) FROM players WHERE name ILIKE $1 AND active = $2"
+    );
+}
+
+#[tokio::test]
+async fn exists_sql_uses_filters_and_limits_inner_query() {
+    let query = Player::query(pg_pool()).by_name(String::from("Alice"));
+
+    let (sql, _) = query.build_exists_sql().unwrap();
+
+    assert_eq!(
+        sql,
+        "SELECT EXISTS(SELECT 1 FROM players WHERE name = $1 LIMIT 1)"
+    );
+}
+
+#[tokio::test]
+async fn count_sql_requires_filters() {
+    let error = Player::query(pg_pool()).build_count_sql().unwrap_err();
+
+    assert!(matches!(error, PlayerQueryError::NoFilters));
+}
+
+#[tokio::test]
+async fn exists_sql_requires_filters() {
+    let error = Player::query(pg_pool()).build_exists_sql().unwrap_err();
+
+    assert!(matches!(error, PlayerQueryError::NoFilters));
+}
+
+#[tokio::test]
 async fn delete_many_sql_uses_filters_and_placeholders() {
     let query = Player::query(pg_pool())
         .where_name(QueryOperator::ILike, String::from("ali%"))

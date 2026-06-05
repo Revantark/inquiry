@@ -18,7 +18,7 @@ For a model like `Player`, `inquiry` generates:
 - a query builder named `PlayerQuery<T>`
 - `PlayerQueryError`
 - table creation helpers
-- insert, upsert, update, fetch, and delete methods
+- insert, upsert, update, fetch, count, exists, and delete methods
 - `by_<field>` equality filters
 - `where_<field>` operator filters
 
@@ -175,6 +175,19 @@ rows.
 Both methods require at least one filter. If you call them without filters, they
 return `PlayerQueryError::NoFilters`. This is intentional: the generated API is
 biased away from accidental full-table reads.
+
+## Counting and Checking Rows
+
+```rust
+let matching = query.count().await?;
+let any_matching = query.exists().await?;
+```
+
+`count` returns the number of matching rows as an `i64`. `exists` returns
+whether at least one matching row exists.
+
+Both methods require at least one filter. If you call them without filters, they
+return `PlayerQueryError::NoFilters`, matching the fetch safety behavior.
 
 ## Deleting Rows
 
@@ -340,8 +353,8 @@ For other types, add `#[query(sql_type = "...")]` to the field.
 - This crate currently targets SQLx and PostgreSQL.
 - The derive macro only supports named struct fields.
 - Only one primary key field is supported.
-- `fetch_one`, `fetch_many`, `delete_one`, and `delete_many` require at least
-  one configured filter.
+- `fetch_one`, `fetch_many`, `count`, `exists`, `delete_one`, and `delete_many`
+  require at least one configured filter.
 - `LIKE` and `ILIKE` are available through `QueryOperator`; pass the SQL pattern
   yourself, such as `"Ali%"` or `"%ice"`.
 - PostgreSQL does not have native unsigned integer columns. Prefer signed Rust
