@@ -16,7 +16,9 @@ pub(super) struct ExpansionContext {
     pub(super) query_name: Ident,
     // Errors returned by queryable model
     pub(super) query_error: Ident,
+    // Used for conditions in the sql statement
     pub(super) query_condition: Ident,
+    // Used for OR group conditions
     pub(super) query_group: Ident,
     pub(super) inquiry_path: Path,
     pub(super) insert_fields: String,
