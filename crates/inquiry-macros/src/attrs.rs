@@ -1,4 +1,4 @@
-use syn::{Attribute, DeriveInput, LitStr};
+use syn::{Attribute, LitStr};
 
 #[derive(Default)]
 pub(crate) struct FieldAttrs {
@@ -7,11 +7,7 @@ pub(crate) struct FieldAttrs {
     pub(crate) primary_key: bool,
 }
 
-pub(crate) fn parse_table_name(input: &DeriveInput) -> syn::Result<Option<String>> {
-    parse_table_name_attrs(&input.attrs)
-}
-
-fn parse_table_name_attrs(attrs: &[Attribute]) -> syn::Result<Option<String>> {
+pub(crate) fn parse_table_name(attrs: &[Attribute]) -> syn::Result<Option<String>> {
     for attr in attrs {
         if !attr.path().is_ident("query") {
             continue;
@@ -36,10 +32,10 @@ fn parse_table_name_attrs(attrs: &[Attribute]) -> syn::Result<Option<String>> {
     Ok(None)
 }
 
-pub(crate) fn parse_field_attrs(field: &syn::Field) -> syn::Result<FieldAttrs> {
+pub(crate) fn parse_field_attrs(field_attrs: &[Attribute]) -> syn::Result<FieldAttrs> {
     let mut attrs = FieldAttrs::default();
 
-    for attr in &field.attrs {
+    for attr in field_attrs {
         if !attr.path().is_ident("query") {
             continue;
         }

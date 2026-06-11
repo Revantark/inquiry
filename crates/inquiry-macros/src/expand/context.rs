@@ -10,8 +10,11 @@ use crate::{
 pub(super) struct ExpansionContext {
     pub(super) struct_name: Ident,
     pub(super) table_name: String,
+    // Model fields like name, address... and their sql properties
     pub(super) fields: Vec<FieldInfo>,
+    // Generated {StructName}Query type responsible for quering the database for CRUD operations
     pub(super) query_name: Ident,
+    // Errors returned by queryable model
     pub(super) query_error: Ident,
     pub(super) query_condition: Ident,
     pub(super) query_group: Ident,

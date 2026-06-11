@@ -18,12 +18,12 @@ pub(crate) struct ModelInfo {
 
 pub(crate) fn parse(input: DeriveInput) -> syn::Result<ModelInfo> {
     let table_name =
-        attrs::parse_table_name(&input)?.unwrap_or_else(|| default_table_name(&input.ident));
+        attrs::parse_table_name(&input.attrs)?.unwrap_or_else(|| default_table_name(&input.ident));
     validate_sql_identifier(&table_name, input.ident.span(), "table")?;
     let struct_name = input.ident;
     let fields = match input.data {
         Data::Struct(data) => parse_fields(data.fields)?,
-        _ => Vec::new(),
+        _ => Vec::new(), //TODO: should handle other data type
     };
 
     let model = ModelInfo {
@@ -39,7 +39,7 @@ fn parse_fields(fields: Fields) -> syn::Result<Vec<FieldInfo>> {
     let mut parsed_fields = Vec::new();
 
     for field in fields {
-        let attrs = attrs::parse_field_attrs(&field)?;
+        let attrs = attrs::parse_field_attrs(&field.attrs)?;
         let sql_type = attrs
             .sql_type
             .or_else(|| sql::postgres_type_for(&field.ty))
@@ -71,11 +71,7 @@ fn default_table_name(ident: &Ident) -> String {
     ident.to_string().to_lowercase()
 }
 
-fn validate_sql_identifier(
-    value: &str,
-    span: proc_macro2::Span,
-    kind: &str,
-) -> syn::Result<()> {
+fn validate_sql_identifier(value: &str, span: proc_macro2::Span, kind: &str) -> syn::Result<()> {
     let mut chars = value.chars();
     let starts_valid = chars
         .next()
@@ -88,7 +84,9 @@ fn validate_sql_identifier(
 
     Err(syn::Error::new(
         span,
-        format!("{kind} name must be a simple SQL identifier: ASCII letters, digits, and underscores, not starting with a digit"),
+        format!(
+            "{kind} name must be a simple SQL identifier: ASCII letters, digits, and underscores, not starting with a digit"
+        ),
     ))
 }
 
