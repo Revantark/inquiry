@@ -1,4 +1,4 @@
-use inquiry::{Queryable, QueryOrderingOperator};
+use inquiry_sqlx::{Queryable, QueryOrderingOperator};
 
 #[derive(sqlx::FromRow, Queryable, Debug)]
 struct Player {

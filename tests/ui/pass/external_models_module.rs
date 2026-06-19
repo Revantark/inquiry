@@ -1,7 +1,7 @@
 mod external_models;
 
 use external_models::{Post, User};
-use inquiry::{QueryOperator, QueryOrderingOperator};
+use inquiry_sqlx::{QueryOperator, QueryOrderingOperator};
 
 fn assert_external_models_api<T: sqlx::Database>(pool: sqlx::Pool<T>) {
     let _ = User::query(pool.clone()).where_name(QueryOperator::ILike, String::from("ali%"));

@@ -1,0 +1,21 @@
+[package]
+name = "inquiry-sqlx-macros"
+version = "0.1.0"
+edition = "2024"
+description = "Procedural macros for inquiry-sqlx."
+rust-version = "1.85"
+license = "MIT"
+repository = "https://github.com/Revantark/inquiry"
+documentation = "https://docs.rs/inquiry-sqlx-macros"
+keywords = ["sqlx", "postgres", "query-builder", "derive"]
+categories = ["database"]
+readme = "../../README.md"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0.106"
+proc-macro-crate = "3.4.0"
+quote = "1.0.45"
+syn = { version = "2.0.117", features = ["full"] }

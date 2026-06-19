@@ -1,5 +1,5 @@
 mod users {
-    use inquiry::Queryable;
+    use inquiry_sqlx::Queryable;
 
     #[derive(sqlx::FromRow, Queryable, Debug)]
     #[query(table = "users")]
@@ -11,7 +11,7 @@ mod users {
 }
 
 mod posts {
-    use inquiry::Queryable;
+    use inquiry_sqlx::Queryable;
 
     #[derive(sqlx::FromRow, Queryable, Debug)]
     #[query(table = "posts")]
@@ -23,7 +23,7 @@ mod posts {
     }
 }
 
-use inquiry::QueryOperator;
+use inquiry_sqlx::QueryOperator;
 
 fn assert_multiple_model_api<T: sqlx::Database>(pool: sqlx::Pool<T>) {
     let _ = users::User::query(pool.clone())

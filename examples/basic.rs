@@ -1,6 +1,6 @@
 mod models;
 
-use inquiry::{QueryOperator, QueryOrderingOperator};
+use inquiry_sqlx::{QueryOperator, QueryOrderingOperator};
 use models::{Post, User};
 use sqlx::PgPool;
 

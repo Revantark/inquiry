@@ -1,6 +1,6 @@
-extern crate self as inquiry;
+extern crate self as inquiry_sqlx;
 
-pub use inquiry_macros::Queryable;
+pub use inquiry_sqlx_macros::Queryable;
 
 /// Operators for equality comparisons and text pattern matching.
 #[derive(Clone, Copy, Debug)]

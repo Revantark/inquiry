@@ -1,4 +1,4 @@
-use inquiry::{QueryEqualityOperator, QueryOperator, Queryable};
+use inquiry_sqlx::{QueryEqualityOperator, QueryOperator, Queryable};
 
 #[derive(sqlx::FromRow, Queryable, Debug)]
 #[query(table = "players")]

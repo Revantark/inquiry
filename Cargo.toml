@@ -1,15 +1,18 @@
 [package]
-name = "inquiry"
+name = "inquiry-sqlx"
 version = "0.1.0"
 edition = "2024"
 description = "SQLx-backed query builders generated from Rust structs."
 readme = "README.md"
 rust-version = "1.85"
+license = "MIT"
+repository = "https://github.com/Revantark/inquiry"
+documentation = "https://docs.rs/inquiry-sqlx"
 categories = ["database"]
 keywords = ["sqlx", "postgres", "query-builder", "derive"]
 
 [dependencies]
-inquiry-macros = { version = "0.1.0", path = "crates/inquiry-macros" }
+inquiry-sqlx-macros = { version = "0.1.0", path = "crates/inquiry-sqlx-macros" }
 
 [dev-dependencies]
 sqlx = { version = "0.8.6", default-features = false, features = ["postgres", "runtime-tokio", "tls-native-tls", "derive"] }

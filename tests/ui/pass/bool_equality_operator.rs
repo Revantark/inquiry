@@ -1,4 +1,4 @@
-use inquiry::{Queryable, QueryEqualityOperator};
+use inquiry_sqlx::{Queryable, QueryEqualityOperator};
 
 #[derive(sqlx::FromRow, Queryable, Debug)]
 struct FeatureFlag {

@@ -1,9 +1,9 @@
-# inquiry
+# inquiry-sqlx
 
-`inquiry` is a small Rust crate for people who want simple SQLx-backed query
+`inquiry-sqlx` is a small Rust crate for people who want simple SQLx-backed query
 builders without writing the same CRUD glue for every struct.
 
-You define a model, derive `Queryable`, and `inquiry` gives you a typed query
+You define a model, derive `Queryable`, and `inquiry-sqlx` gives you a typed query
 builder for that model. It can create the table, insert rows, upsert by primary
 key, update by primary key, fetch rows, and delete rows with field-specific
 filters.
@@ -12,7 +12,7 @@ The crate currently targets SQLx and PostgreSQL.
 
 ## What It Generates
 
-For a model like `Player`, `inquiry` generates:
+For a model like `Player`, `inquiry-sqlx` generates:
 
 - `Player::query(pool)`
 - a query builder named `PlayerQuery<T>`
@@ -34,7 +34,7 @@ duplicate operator enums for each model.
 ## A Small Example
 
 ```rust
-use inquiry::{Queryable, QueryOperator, QueryOrderingOperator};
+use inquiry_sqlx::{Queryable, QueryOperator, QueryOrderingOperator};
 use sqlx::PgPool;
 
 #[derive(sqlx::FromRow, Queryable, Debug)]
@@ -245,7 +245,7 @@ Models can live in normal Rust modules.
 // src/main.rs
 mod models;
 
-use inquiry::QueryOperator;
+use inquiry_sqlx::QueryOperator;
 use models::{Post, User};
 
 let users = User::query(pool.clone());
@@ -262,7 +262,7 @@ let alice_posts = posts
 
 ```rust
 // src/models/mod.rs
-use inquiry::Queryable;
+use inquiry_sqlx::Queryable;
 
 #[derive(sqlx::FromRow, Queryable, Debug)]
 #[query(table = "users")]

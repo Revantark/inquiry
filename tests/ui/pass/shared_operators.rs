@@ -1,4 +1,4 @@
-use inquiry::{Queryable, QueryOperator, QueryOrderingOperator};
+use inquiry_sqlx::{Queryable, QueryOperator, QueryOrderingOperator};
 
 #[derive(sqlx::FromRow, Queryable, Debug)]
 #[query(table = "players")]

@@ -82,13 +82,13 @@ fn build_field_bind_bounds(fields: &[FieldInfo]) -> Vec<TokenStream> {
 }
 
 fn inquiry_crate_path() -> Path {
-    match proc_macro_crate::crate_name("inquiry") {
-        Ok(proc_macro_crate::FoundCrate::Itself) => syn::parse_quote! { ::inquiry },
+    match proc_macro_crate::crate_name("inquiry-sqlx") {
+        Ok(proc_macro_crate::FoundCrate::Itself) => syn::parse_quote! { ::inquiry_sqlx },
         Ok(proc_macro_crate::FoundCrate::Name(name)) => {
             let ident = Ident::new(&name, proc_macro2::Span::call_site());
             syn::parse_quote! { ::#ident }
         }
-        Err(_) => syn::parse_quote! { ::inquiry },
+        Err(_) => syn::parse_quote! { ::inquiry_sqlx },
     }
 }
 

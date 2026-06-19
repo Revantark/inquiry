@@ -1,4 +1,4 @@
-use inquiry::Queryable;
+use inquiry_sqlx::Queryable;
 
 #[derive(sqlx::FromRow, Queryable, Debug)]
 #[query(table = "players")]

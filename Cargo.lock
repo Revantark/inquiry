@@ -556,17 +556,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "inquiry"
+name = "inquiry-sqlx"
 version = "0.1.0"
 dependencies = [
- "inquiry-macros",
+ "inquiry-sqlx-macros",
  "sqlx",
  "tokio",
  "trybuild",
 ]
 
 [[package]]
-name = "inquiry-macros"
+name = "inquiry-sqlx-macros"
 version = "0.1.0"
 dependencies = [
  "proc-macro-crate",

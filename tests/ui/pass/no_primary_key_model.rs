@@ -1,4 +1,4 @@
-use inquiry::Queryable;
+use inquiry_sqlx::Queryable;
 
 #[derive(sqlx::FromRow, Queryable, Debug)]
 #[query(table = "audit_events")]
@@ -12,7 +12,7 @@ fn assert_no_primary_key_api<T: sqlx::Database>(pool: sqlx::Pool<T>) {
 
     let _ = query
         .clone()
-        .where_event_type(inquiry::QueryOperator::Eq, String::from("login"))
+        .where_event_type(inquiry_sqlx::QueryOperator::Eq, String::from("login"))
         .by_actor_id(String::from("user-1"));
 }
 
