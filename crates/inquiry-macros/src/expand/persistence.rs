@@ -3,14 +3,14 @@ use quote::quote;
 
 use crate::sql;
 
-use super::context::{field_bind_bounds, ExpansionContext};
+use super::context::ExpansionContext;
 
 pub(super) fn expand_insert_methods(cx: &ExpansionContext) -> TokenStream {
     let struct_name = &cx.struct_name;
     let table_name = &cx.table_name;
     let insert_fields = &cx.insert_fields;
     let query_error = &cx.query_error;
-    let field_bind_bounds = field_bind_bounds(cx);
+    let field_bind_bounds = &cx.field_bind_bounds;
     let insert_value_binds = insert_value_binds(cx);
 
     quote! {
@@ -87,7 +87,7 @@ pub(super) fn expand_upsert_method(cx: &ExpansionContext) -> TokenStream {
     let table_name = &cx.table_name;
     let insert_fields = &cx.insert_fields;
     let query_error = &cx.query_error;
-    let field_bind_bounds = field_bind_bounds(cx);
+    let field_bind_bounds = &cx.field_bind_bounds;
     let insert_value_binds = insert_value_binds(cx);
 
     if let Some(primary_key_field) = cx.primary_key() {
@@ -163,7 +163,7 @@ pub(super) fn expand_update_methods(cx: &ExpansionContext) -> TokenStream {
     let struct_name = &cx.struct_name;
     let table_name = &cx.table_name;
     let query_error = &cx.query_error;
-    let field_bind_bounds = field_bind_bounds(cx);
+    let field_bind_bounds = &cx.field_bind_bounds;
 
     if let Some(primary_key_field) = cx.primary_key() {
         let primary_key_name = &primary_key_field.ident;
@@ -288,7 +288,7 @@ pub(super) fn expand_update_methods(cx: &ExpansionContext) -> TokenStream {
 pub(super) fn expand_delete_methods(cx: &ExpansionContext) -> TokenStream {
     let table_name = &cx.table_name;
     let query_error = &cx.query_error;
-    let field_bind_bounds = field_bind_bounds(cx);
+    let field_bind_bounds = &cx.field_bind_bounds;
 
     quote! {
         fn build_delete_sql<'args>(

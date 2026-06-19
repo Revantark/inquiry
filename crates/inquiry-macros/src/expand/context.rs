@@ -24,6 +24,7 @@ pub(super) struct ExpansionContext {
     pub(super) insert_fields: String,
     pub(super) select_fields: String,
     pub(super) create_table_columns: String,
+    pub(super) field_bind_bounds: Vec<TokenStream>,
 }
 
 impl ExpansionContext {
@@ -36,6 +37,7 @@ impl ExpansionContext {
         let insert_fields = sql::insert_fields(&model.fields);
         let select_fields = sql::select_fields(&model.fields);
         let create_table_columns = sql::create_table_columns(&model.fields);
+        let field_bind_bounds = build_field_bind_bounds(&model.fields);
 
         Self {
             struct_name: model.struct_name,
@@ -49,6 +51,7 @@ impl ExpansionContext {
             insert_fields,
             select_fields,
             create_table_columns,
+            field_bind_bounds,
         }
     }
 
@@ -65,8 +68,8 @@ pub(super) fn doc_lit(text: impl AsRef<str>) -> LitStr {
     LitStr::new(text.as_ref(), proc_macro2::Span::call_site())
 }
 
-pub(super) fn field_bind_bounds(cx: &ExpansionContext) -> Vec<TokenStream> {
-    cx.fields
+fn build_field_bind_bounds(fields: &[FieldInfo]) -> Vec<TokenStream> {
+    fields
         .iter()
         .map(|field| {
             let ty = &field.ty;

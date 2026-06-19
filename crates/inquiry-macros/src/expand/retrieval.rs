@@ -1,11 +1,11 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
-use super::context::{field_bind_bounds, ExpansionContext};
+use super::context::ExpansionContext;
 
 pub(super) fn expand_append_conditions_method(cx: &ExpansionContext) -> TokenStream {
     let query_error = &cx.query_error;
-    let field_bind_bounds = field_bind_bounds(cx);
+    let field_bind_bounds = &cx.field_bind_bounds;
 
     quote! {
         fn append_conditions_sql<'args>(
@@ -42,7 +42,7 @@ pub(super) fn expand_append_conditions_method(cx: &ExpansionContext) -> TokenStr
 pub(super) fn expand_fetch_methods(cx: &ExpansionContext) -> TokenStream {
     let struct_name = &cx.struct_name;
     let query_error = &cx.query_error;
-    let field_bind_bounds = field_bind_bounds(cx);
+    let field_bind_bounds = &cx.field_bind_bounds;
 
     quote! {
         /// Fetches at most one row matching the configured filters and conditions.
@@ -88,7 +88,7 @@ pub(super) fn expand_fetch_methods(cx: &ExpansionContext) -> TokenStream {
 pub(super) fn expand_count_exists_methods(cx: &ExpansionContext) -> TokenStream {
     let table_name = &cx.table_name;
     let query_error = &cx.query_error;
-    let field_bind_bounds = field_bind_bounds(cx);
+    let field_bind_bounds = &cx.field_bind_bounds;
 
     quote! {
         fn build_count_sql<'args>(
@@ -185,7 +185,7 @@ pub(super) fn expand_build_select_sql_method(cx: &ExpansionContext) -> TokenStre
     let table_name = &cx.table_name;
     let select_fields = &cx.select_fields;
     let query_error = &cx.query_error;
-    let field_bind_bounds = field_bind_bounds(cx);
+    let field_bind_bounds = &cx.field_bind_bounds;
 
     quote! {
         fn build_select_sql<'args>(
